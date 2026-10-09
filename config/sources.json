@@ -1,0 +1,14 @@
+{
+  "portal": "https://rubenurbano.github.io/",
+  "origins": ["https://rubenurbano.github.io"],
+  "githubOwner": "rubenurbano",
+  "extraSeeds": [],
+  "excludePaths": ["/area-privada/"],
+  "selfPath": "",
+  "collectionLabels": {},
+  "maxDepth": 2,
+  "maxPagesPerCollection": 2000,
+  "concurrency": 6,
+  "textLimit": 6000,
+  "minKeepRatio": 0.5
+}

@@ -1,0 +1,8 @@
+{
+  "name": "biblioteca-tutoriales",
+  "private": true,
+  "type": "module",
+  "scripts": { "build": "node scripts/build-catalog.mjs", "test": "node scripts/test-search.mjs" },
+  "engines": { "node": ">=20" },
+  "dependencies": { "cheerio": "1.0.0" }
+}

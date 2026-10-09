@@ -47,7 +47,7 @@ async function get(url, prevItem) {
       if (r.status === 404 || r.status === 410) return { status: r.status };
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const type = r.headers.get('content-type') || '';
-      return { status: 200, type, etag: r.headers.get('etag') || '', html: /html|xml|text/.test(type) ? await r.text() : '' };
+      return { status: 200, url: r.url, type, etag: r.headers.get('etag') || '', html: /html|xml|text/.test(type) ? await r.text() : '' };
     } catch (e) { last = e; await new Promise(s => setTimeout(s, 800 * (t + 1))); }
   }
   return { status: 0, error: String(last?.message || last) };
@@ -71,6 +71,10 @@ function extract(html) {
     if (!t) { const c = clean(el.children().first().text()); if (c && c.length < full.length) t = c; }
     return { href: el.attr('href'), title: t, text: full, desc: t ? clean(full.replace(t, '')) : '' };
   }).get();
+  const media = $('audio').map((_, a) => {
+    const el = $(a), src = el.find('source[src]').first().attr('src') || el.attr('src'), box = el.closest('.card,article,li,section') ;
+    return src ? { href: src, title: clean(box.find('h1,h2,h3,h4').first().text()), desc: clean(box.find('p').first().text()), text: '' } : null;
+  }).get().filter(Boolean);
   $('script,style,noscript,nav,footer,template,svg').remove();
   const headings = $('h1,h2,h3').map((_, e) => clean($(e).text())).get().filter(Boolean).slice(0, 40);
   let description = meta('description') || meta('og:description');
@@ -78,7 +82,7 @@ function extract(html) {
   const text = clean($('body').text()).slice(0, cfg.textLimit);
   let date = meta('article:published_time') || meta('date') || $('time[datetime]').first().attr('datetime') || '';
   const d = date && new Date(date); date = d && !isNaN(d) ? d.toISOString().slice(0, 10) : '';
-  return { title, description: description.slice(0, 300), headings, text, date, keywords: meta('keywords').split(',').map(clean).filter(Boolean), links };
+  return { title, description: description.slice(0, 300), headings, text, date, keywords: meta('keywords').split(',').map(clean).filter(Boolean), links: links.concat(media) };
 }
 
 // ---------- descubrimiento ----------
@@ -118,7 +122,7 @@ async function crawlCollection(col) {
       if (depth === 0) ok = true;
       const doc = extract(r.html);
       for (const l of doc.links) {
-        const u = norm(l.href, url);
+        const u = norm(l.href, r.url || url);
         if (!u || !/^https?:$/.test(u.protocol)) continue;
         const hint = { title: l.title, desc: l.desc || (l.title ? '' : l.text) };
         if (u.hostname === 'github.com') {

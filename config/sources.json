@@ -5,7 +5,7 @@
   "extraSeeds": [],
   "excludePaths": ["/area-privada/"],
   "selfPath": "",
-  "collectionLabels": {},
+  "collectionLabels": {"/tutoriales-ai": "IA", "/ruben-urbano-piano": "Piano", "/tutoriales-ajedrez": "Ajedrez", "/tutoriales-audio": "Audio", "/tutoriales-yamaha-psr-sx920": "Yamaha PSR-SX920"},
   "maxDepth": 2,
   "maxPagesPerCollection": 2000,
   "concurrency": 6,
